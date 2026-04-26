@@ -12,44 +12,36 @@ from backend.routes.ticket_routes import ticket_bp
 from backend.routes.dashboard_routes import dashboard_bp
 from backend.routes.upload_routes import upload_bp
 
-def create_app():
-    app = Flask(__name__, 
-                template_folder='../frontend/templates',
-                static_folder='../frontend/static')
-    app.config.from_object(Config)
-    CORS(app)
-    
-    # Initialize database
-    init_db(app)
-    
-    # Register blueprints
-    app.register_blueprint(ticket_bp, url_prefix='/api/tickets')
-    app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
-    app.register_blueprint(upload_bp, url_prefix='/api/upload')
-    
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-    
-    @app.route('/dashboard')
-    def dashboard():
-        return render_template('dashboard.html')
-    
-    @app.route('/create')
-    def create_page():
-        return render_template('create_ticket.html')
-    
-    @app.route('/upload')
-    def upload_page():
-        return render_template('upload.html')
-    
-    return app
+# Create app directly (no function)
+app = Flask(__name__, 
+            template_folder='../frontend/templates',
+            static_folder='../frontend/static')
+app.config.from_object(Config)
+CORS(app)
 
-# Create application instance
-app = create_app()
+# Initialize database
+init_db(app)
 
-# This is what Gunicorn looks for
-application = app
+# Register blueprints
+app.register_blueprint(ticket_bp, url_prefix='/api/tickets')
+app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
+app.register_blueprint(upload_bp, url_prefix='/api/upload')
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/create')
+def create_page():
+    return render_template('create_ticket.html')
+
+@app.route('/upload')
+def upload_page():
+    return render_template('upload.html')
 
 if __name__ == '__main__':
-    application.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
