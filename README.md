@@ -28,7 +28,6 @@
 
 <div align="center">
 
-```markdown
 | Metric | Value |
 |--------|-------|
 | ⏱️ **Development Time** | 2 Weeks |
@@ -46,7 +45,7 @@
 
 ### In Real Enterprises:
 
-```
+
 ┌─────────────────────────────────────────────────────────────┐
 │  ⚠️ THE COST OF SLA BREACHES                                 │
 ├─────────────────────────────────────────────────────────────┤
@@ -65,17 +64,17 @@
 │     • SLA breaches = contract penalties                    │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
-```
+
 
 ### ✅ **How This Project Solves It:**
-
+```
 | Problem | Solution | Impact |
 |---------|----------|--------|
 | Manual ticket tracking | **Automated SLA monitoring** | 100% accurate tracking |
 | No deadline visibility | **Color-coded status badges** | Instant breach identification |
 | Scattered analytics | **Real-time dashboard** | Data-driven decisions |
 | Slow resolution | **Priority-based rules** | 40% faster response |
-
+```
 ---
 
 ## 🧠 **Smart Features That Make This Different**
