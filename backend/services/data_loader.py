@@ -1,5 +1,4 @@
 import csv
-import pandas as pd
 from datetime import datetime, timedelta
 from backend.models.ticket_model import Ticket
 from backend.utils.db import db
@@ -9,31 +8,26 @@ class DataLoader:
     
     @staticmethod
     def load_from_csv(file_path):
-        """Load tickets from CSV file"""
+        """Load tickets from CSV file without pandas"""
         tickets_created = []
-        required_columns = ['title', 'description', 'category', 'priority']
         
         try:
-            df = pd.read_csv(file_path)
-            
-            # Validate required columns
-            missing_columns = [col for col in required_columns if col not in df.columns]
-            if missing_columns:
-                return {'success': False, 'error': f'Missing columns: {missing_columns}'}
-            
-            for _, row in df.iterrows():
-                ticket = Ticket(
-                    title=str(row.get('title', 'Incident Report'))[:200],
-                    description=str(row.get('description', 'No description provided')),
-                    category=DataLoader._validate_category(row.get('category', 'Software')),
-                    priority=DataLoader._validate_priority(row.get('priority', 'Medium')),
-                    status=DataLoader._validate_status(row.get('status', 'Open')),
-                    assigned_to=str(row.get('assigned_to', 'Unassigned')) if pd.notna(row.get('assigned_to')) else None,
-                    source='csv_import'
-                )
+            with open(file_path, 'r', encoding='utf-8') as file:
+                csv_reader = csv.DictReader(file)
                 
-                db.session.add(ticket)
-                tickets_created.append(ticket)
+                for row in csv_reader:
+                    ticket = Ticket(
+                        title=row.get('title', 'Incident Report')[:200],
+                        description=row.get('description', 'No description provided'),
+                        category=DataLoader._validate_category(row.get('category', 'Software')),
+                        priority=DataLoader._validate_priority(row.get('priority', 'Medium')),
+                        status=DataLoader._validate_status(row.get('status', 'Open')),
+                        assigned_to=row.get('assigned_to', None) if row.get('assigned_to') else None,
+                        source='csv_import'
+                    )
+                    
+                    db.session.add(ticket)
+                    tickets_created.append(ticket)
             
             db.session.commit()
             return {'success': True, 'count': len(tickets_created)}
@@ -50,9 +44,7 @@ class DataLoader:
             "Printer not working", "Software installation failed",
             "Email sync problem", "System crash on startup",
             "VPN connection dropping", "Database connection timeout",
-            "Password reset required", "Slow network performance",
-            "Application not responding", "File permission error",
-            "Backup failed", "Security patch needed", "Hardware malfunction"
+            "Password reset required", "Slow network performance"
         ]
         categories = ['Network', 'Software', 'Hardware']
         priorities = ['High', 'Medium', 'Low']
