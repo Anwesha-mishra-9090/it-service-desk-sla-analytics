@@ -9,7 +9,6 @@
 
 ---
 
-```markdown
 ### 🏆 **Why This Project is in Top 5%**
 
 | Aspect | Why It's Exceptional |
@@ -29,6 +28,7 @@
 
 <div align="center">
 
+```markdown
 | Metric | Value |
 |--------|-------|
 | ⏱️ **Development Time** | 2 Weeks |
