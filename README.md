@@ -1,9 +1,4 @@
 
-
-Here's your **elite, recruiter-magnet README.md** that will make your project stand in the top 5% of GitHub projects:
-
----
-
 ```markdown
 <div align="center">
 
