@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Data - IT Service Desk{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-cloud-upload"></i> Import Ticket Data</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>CSV Format Required:</strong> Your CSV file should have columns: 
+                    title, description, category, priority, status (optional), assigned_to (optional)
+                </div>
+                
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="csvFile" class="form-label">Choose CSV File</label>
+                        <input type="file" class="form-control" id="csvFile" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-cloud-upload"></i> Upload and Import
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p>Or generate sample data for testing:</p>
+                    <button class="btn btn-success" onclick="generateSample()">
+                        <i class="bi bi-database"></i> Generate 50 Sample Tickets
+                    </button>
+                </div>
+                
+                <div id="result" class="mt-3" style="display: none;">
+                    <div class="alert"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-file-text"></i> Sample CSV Template</h5>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded">
+title,description,category,priority,status,assigned_to
+"Network Slow","Users experiencing slow internet","Network","High","Open","IT Team"
+"Printer Offline","Printer not responding","Hardware","Medium","In Progress","Support Team"
+"Software Crash","Application crashes on startup","Software","Low","Open","Dev Team"</pre>
+                <button class="btn btn-sm btn-outline-secondary" onclick="downloadTemplate()">
+                    <i class="bi bi-download"></i> Download Template
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('csvFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        showResult('Please select a CSV file', 'danger');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    showResult('Uploading and processing...', 'info');
+    
+    try {
+        const response = await fetch('/api/upload/csv', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showResult(`✅ ${result.message}`, 'success');
+            fileInput.value = '';
+        } else {
+            showResult(`❌ Error: ${result.error}`, 'danger');
+        }
+    } catch (error) {
+        showResult(`❌ Upload failed: ${error.message}`, 'danger');
+    }
+});
+
+async function generateSample() {
+    showResult('Generating sample tickets...', 'info');
+    
+    try {
+        const response = await fetch('/api/upload/sample', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showResult(`✅ ${result.message}`, 'success');
+        } else {
+            showResult(`❌ Error: ${result.error}`, 'danger');
+        }
+    } catch (error) {
+        showResult(`❌ Failed: ${error.message}`, 'danger');
+    }
+}
+
+function showResult(message, type) {
+    const resultDiv = document.getElementById('result');
+    const alertDiv = resultDiv.querySelector('.alert');
+    
+    resultDiv.style.display = 'block';
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.innerHTML = message;
+    
+    setTimeout(() => {
+        if (type !== 'info') {
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 5000);
+        }
+    }, 1000);
+}
+
+function downloadTemplate() {
+    const csvContent = `title,description,category,priority,status,assigned_to
+"Network Connectivity Issue","Users unable to connect to network","Network","High","Open","IT Team"
+"Email Server Down","Email service is not responding","Software","High","In Progress","SysAdmin"
+"Printer Not Working","Office printer offline","Hardware","Medium","Open","Support"
+"Database Slow","Query response time high","Software","Medium","Open","DBA Team"
+"VPN Connection Failed","Remote users cannot connect","Network","Low","Open","Network Team"`;
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sample_tickets.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
+{% endblock %}
