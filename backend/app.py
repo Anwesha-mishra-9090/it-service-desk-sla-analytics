@@ -45,8 +45,11 @@ def create_app():
     
     return app
 
-# For Gunicorn (Render uses this)
-application = create_app()
+# Create application instance
+app = create_app()
+
+# This is what Gunicorn looks for
+application = app
 
 if __name__ == '__main__':
     application.run(debug=True, host='0.0.0.0', port=5000)
