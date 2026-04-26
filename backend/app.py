@@ -7,12 +7,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from flask import Flask, render_template
 from flask_cors import CORS
 from backend.config import Config
-from backend.utils.db import init_db
+from backend.utils.db import db, init_db
 from backend.routes.ticket_routes import ticket_bp
 from backend.routes.dashboard_routes import dashboard_bp
 from backend.routes.upload_routes import upload_bp
 
-# Create app directly (no function)
+# Create Flask app
 app = Flask(__name__, 
             template_folder='../frontend/templates',
             static_folder='../frontend/static')
@@ -42,6 +42,9 @@ def create_page():
 @app.route('/upload')
 def upload_page():
     return render_template('upload.html')
+
+# For Gunicorn (Render)
+application = app
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
