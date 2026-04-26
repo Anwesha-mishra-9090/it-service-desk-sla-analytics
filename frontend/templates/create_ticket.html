@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Create Ticket - IT Service Desk{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-plus-circle"></i> Create New Service Ticket</h4>
+            </div>
+            <div class="card-body">
+                <form id="createTicketForm">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title *</label>
+                        <input type="text" class="form-control" id="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea class="form-control" id="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label">Category *</label>
+                            <select class="form-control" id="category" required>
+                                <option value="">Select Category</option>
+                                <option value="Network">Network</option>
+                                <option value="Software">Software</option>
+                                <option value="Hardware">Hardware</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="priority" class="form-label">Priority *</label>
+                            <select class="form-control" id="priority" required>
+                                <option value="">Select Priority</option>
+                                <option value="High">High (SLA: 4 hours)</option>
+                                <option value="Medium">Medium (SLA: 24 hours)</option>
+                                <option value="Low">Low (SLA: 48 hours)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="assigned_to" class="form-label">Assign To</label>
+                        <input type="text" class="form-control" id="assigned_to" placeholder="Team member name">
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-clock"></i>
+                        <strong>SLA Deadline:</strong> Will be calculated automatically based on priority
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create Ticket
+                    </button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </form>
+                
+                <div id="result" class="mt-3" style="display: none;">
+                    <div class="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('createTicketForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const ticketData = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        category: document.getElementById('category').value,
+        priority: document.getElementById('priority').value,
+        assigned_to: document.getElementById('assigned_to').value || null
+    };
+    
+    // Validate
+    if (!ticketData.title || !ticketData.description || !ticketData.category || !ticketData.priority) {
+        showResult('Please fill all required fields', 'danger');
+        return;
+    }
+    
+    showResult('Creating ticket...', 'info');
+    
+    try {
+        const response = await fetch('/api/tickets/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ticketData)
+        });
+        
+        if (response.ok) {
+            const ticket = await response.json();
+            showResult(`✅ Ticket #${ticket.id} created successfully! Redirecting...`, 'success');
+            
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        } else {
+            const error = await response.json();
+            showResult(`❌ Failed to create ticket: ${error.error}`, 'danger');
+        }
+    } catch (error) {
+        showResult(`❌ Error: ${error.message}`, 'danger');
+    }
+});
+
+function showResult(message, type) {
+    const resultDiv = document.getElementById('result');
+    const alertDiv = resultDiv.querySelector('.alert');
+    
+    resultDiv.style.display = 'block';
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.innerHTML = message;
+}
+</script>
+{% endblock %}

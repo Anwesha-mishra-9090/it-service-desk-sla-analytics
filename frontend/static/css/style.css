@@ -1,0 +1,132 @@
+/* Custom styles for IT Service Desk */
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+}
+
+.table th {
+    background-color: #343a40;
+    color: white;
+}
+
+.badge {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+}
+
+.btn-sm {
+    margin: 0 2px;
+}
+
+/* SLA Status Colors */
+.sla-within {
+    background-color: #28a745;
+}
+
+.sla-near {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.sla-breached {
+    background-color: #dc3545;
+}
+
+/* Priority Colors */
+.priority-high {
+    background-color: #dc3545;
+}
+
+.priority-medium {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.priority-low {
+    background-color: #28a745;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Responsive tables */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* Loading spinner */
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Dashboard cards */
+.card-stats {
+    transition: transform 0.2s;
+}
+
+.card-stats:hover {
+    transform: translateY(-5px);
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.status-open {
+    background-color: #dc3545;
+}
+
+.status-progress {
+    background-color: #ffc107;
+}
+
+.status-resolved {
+    background-color: #28a745;
+}

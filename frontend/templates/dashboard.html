@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - IT Service Desk{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Analytics Dashboard</h2>
+    
+    <!-- Error Alert -->
+    <div id="errorAlert" class="alert alert-danger" style="display: none;">
+        <strong>Error!</strong> <span id="errorMessage"></span>
+    </div>
+    
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading dashboard data...</p>
+    </div>
+    
+    <!-- Dashboard Content -->
+    <div id="dashboardContent" style="display: none;">
+        <!-- KPI Cards Row -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Tickets</h5>
+                        <h2 id="totalTickets">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Open Tickets</h5>
+                        <h2 id="openTickets">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Resolution Rate</h5>
+                        <h2 id="resolutionRate">0%</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">SLA Compliance</h5>
+                        <h2 id="slaCompliance">0%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Simple Charts Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Category Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Priority Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="priorityChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simple dashboard loader with error handling
+async function loadDashboard() {
+    // Show loading spinner
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('dashboardContent').style.display = 'none';
+    document.getElementById('errorAlert').style.display = 'none';
+    
+    try {
+        const response = await fetch('/api/dashboard/stats');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Check if data has error
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        
+        // Update KPI cards
+        document.getElementById('totalTickets').textContent = data.summary?.total_tickets || 0;
+        document.getElementById('openTickets').textContent = data.summary?.open_tickets || 0;
+        document.getElementById('resolutionRate').textContent = `${data.summary?.resolution_rate || 0}%`;
+        document.getElementById('slaCompliance').textContent = `${data.sla_metrics?.compliance_rate || 0}%`;
+        
+        // Create simple charts
+        createCategoryChart(data.category_distribution || {});
+        createPriorityChart(data.priority_distribution || {});
+        
+        // Show content
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('errorAlert').style.display = 'block';
+        document.getElementById('errorMessage').textContent = error.message;
+    }
+}
+
+function createCategoryChart(data) {
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                data: Object.values(data),
+                backgroundColor: ['#007bff', '#28a745', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+
+function createPriorityChart(data) {
+    const ctx = document.getElementById('priorityChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                data: Object.values(data),
+                backgroundColor: ['#dc3545', '#ffc107', '#28a745']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+
+// Load dashboard when page ready
+document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+{% endblock %}
