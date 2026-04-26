@@ -393,17 +393,17 @@ POST /api/tickets
 
 ---
 
-## 📸 **Add Your Actual Screenshots**
+<div align="center">
+    
+### ScreenShot from LIVE :  ###
 
-Take these screenshots from your live app:
+1. **Dashboard with charts** → <img width="1919" height="960" alt="image" src="https://github.com/user-attachments/assets/f406d145-c6a2-4192-9013-9df00b97ab6d" />
+2. **Ticket list page** → <img width="1919" height="873" alt="image" src="https://github.com/user-attachments/assets/f1c98639-4db9-4452-baa9-110b4b62a55a" />
+3. **SLA status badges** → <img width="1919" height="866" alt="image" src="https://github.com/user-attachments/assets/1eefe660-069a-474d-bbaa-8710fb64c072" />
+4. **Create ticket form** → <img width="1919" height="874" alt="image" src="https://github.com/user-attachments/assets/d715939b-abdb-4102-a2dc-0852388fee3d" />
+5. **CSV upload page** → <img width="1919" height="874" alt="image" src="https://github.com/user-attachments/assets/4aba5ec9-e238-4d41-af5c-36043de9f067" />
 
-1. **Dashboard with charts** → Replace chart placeholder
-2. **Ticket list page** → Show actual tickets
-3. **SLA status badges** → Show red/yellow/green badges
-4. **Create ticket form** → Show form UI
-5. **CSV upload page** → Show upload interface
 
-Upload them to your GitHub repo and replace the placeholder links.
 
 ---
 
